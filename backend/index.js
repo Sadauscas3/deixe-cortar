@@ -109,3 +109,85 @@ app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`)
 })
 
+app.post('/customersfodao', async (req, res) => {
+  const { name, email, phone, address } = req.body;
+  try {
+    const newCustomer = await prisma.customer.create({
+      data: {
+        name,
+        email,
+        phone,
+        address
+      },
+    });
+    res.json({ message: 'Cliente criado com sucesso', newCustomer });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao criar cliente', error });
+  }
+});
+
+app.get('/customersfodao', async (req, res) => {
+  try {
+    const customers = await prisma.customer.findMany();
+    res.json(customers);
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar clientes', error });
+  }
+});
+
+app.get('/customersfodao/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const customer = await prisma.customer.findUnique({ where: { id: parseInt(id) } });
+    if (customer) {
+      res.json(customer);
+    } else {
+      res.status(404).json({ message: 'Cliente não encontrado' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao buscar cliente', error });
+  }
+});
+
+app.put('/customersfodao/:id', async (req, res) => {
+  const { id } = req.params;
+  const { name, email, phone, address } = req.body;
+  try {
+    const updatedCustomer = await prisma.customer.update({
+      where: { id: parseInt(id) },
+      data: {
+        name,
+        email,
+        phone,
+        address
+      },
+    });
+    res.json({ message: 'Cliente atualizado com sucesso', updatedCustomer });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao atualizar cliente', error });
+  }
+});
+
+app.delete('/customersfodao/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedCustomer = await prisma.customer.delete({ where: { id: parseInt(id) } });
+    res.json({ message: 'Cliente removido com sucesso', deletedCustomer });
+  } catch (error) {
+    res.status(500).json({ message: 'Erro ao remover cliente', error });
+  }
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
+
+app.post('/json', (req, res) => {
+  const dados = req.body;
+  console.log(dados.nome);
+  res.json({ message: 'lumbertycoon', dados });
+});
+
+app.listen(port, () => {
+  console.log(`Example app listening at http://localhost:${port}`);
+});
